@@ -1,0 +1,54 @@
+name: Deploy web build to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.5'
+          channel: 'stable'
+
+      - run: flutter pub get
+
+      # Recompiled fresh on every deploy so it can never go stale relative
+      # to the committed web/drift_worker.dart or the drift package
+      # version, even though a copy is also committed for local dev
+      # convenience.
+      - run: dart compile js -O4 -o web/drift_worker.js web/drift_worker.dart
+
+      # base-href matches this repo's GitHub Pages project-site path
+      # (https://<owner>.github.io/genetics-app/).
+      - run: flutter build web --release --base-href /genetics-app/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

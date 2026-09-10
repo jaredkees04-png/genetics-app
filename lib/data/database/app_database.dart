@@ -48,6 +48,16 @@ class AppDatabase extends _$AppDatabase {
       );
 
   static QueryExecutor _openConnection() {
-    return driftDatabase(name: 'genetics_app_db');
+    return driftDatabase(
+      name: 'genetics_app_db',
+      // Only used when compiling to web; harmlessly ignored on native
+      // platforms. Both files are served from web/ (see web/sqlite3.wasm
+      // and web/drift_worker.dart) and picked up automatically by the
+      // Flutter web build.
+      web: DriftWebOptions(
+        sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+        driftWorker: Uri.parse('drift_worker.js'),
+      ),
+    );
   }
 }
