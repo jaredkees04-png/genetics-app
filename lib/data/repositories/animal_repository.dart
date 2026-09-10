@@ -86,10 +86,30 @@ class AnimalRepository {
     }
   }
 
+  Future<void> clearGenotype({
+    required String animalId,
+    required String locusId,
+  }) {
+    return (db.delete(db.animalGenotypes)
+          ..where((t) => t.animalId.equals(animalId) & t.locusId.equals(locusId)))
+        .go();
+  }
+
   Future<List<AnimalGenotype>> genotypesForAnimal(String animalId) =>
       (db.select(db.animalGenotypes)
             ..where((t) => t.animalId.equals(animalId)))
           .get();
+
+  Stream<List<AnimalGenotype>> watchGenotypes(String animalId) =>
+      (db.select(db.animalGenotypes)
+            ..where((t) => t.animalId.equals(animalId)))
+          .watch();
+
+  Stream<List<AnimalPhenotypeObservation>> watchPhenotypeObservations(
+          String animalId) =>
+      (db.select(db.animalPhenotypeObservations)
+            ..where((t) => t.animalId.equals(animalId)))
+          .watch();
 
   Future<void> setPhenotypeObservation({
     required String animalId,

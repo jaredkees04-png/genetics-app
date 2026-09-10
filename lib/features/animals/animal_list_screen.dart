@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
 import 'add_animal_screen.dart';
+import 'animal_detail_screen.dart';
 
 class AnimalListScreen extends ConsumerWidget {
   const AnimalListScreen({super.key});
@@ -49,6 +50,12 @@ class AnimalListScreen extends ConsumerWidget {
                   if (animal.phenotypeDescription != null)
                     animal.phenotypeDescription!,
                 ].join(' · ')),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => AnimalDetailScreen(animalId: animal.id),
+                  ),
+                ),
               );
             },
           );

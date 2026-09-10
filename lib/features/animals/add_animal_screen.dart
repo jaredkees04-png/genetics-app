@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
 import '../../data/database/app_database.dart';
 import '../../domain/genetics/genetics_models.dart';
+import 'widgets/locus_genotype_field.dart';
 
 class AddAnimalScreen extends ConsumerStatefulWidget {
   const AddAnimalScreen({super.key});
@@ -151,67 +152,18 @@ class _AddAnimalScreenState extends ConsumerState<AddAnimalScreen> {
     );
   }
 
-  bool _isHemizygousForThisAnimal(LocusInfo locus) {
-    // Chicken is ZW: hens are the heterogametic sex, so a hen is
-    // hemizygous (single allele) at a Z-linked locus.
-    return locus.isSexLinked && _sex == 'female';
-  }
-
   Widget _buildLocusRow(LocusInfo locus) {
-    final hemizygous = _isHemizygousForThisAnimal(locus);
+    final hemizygous = isHemizygousForAnimal(locus, _sex);
     final current = _genotypeSelections[locus.id] ?? (null, null);
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(locus.name, style: const TextStyle(fontSize: 13)),
-          ),
-          Expanded(
-            flex: 3,
-            child: DropdownButtonFormField<String?>(
-              initialValue: current.$1,
-              isExpanded: true,
-              decoration: InputDecoration(
-                labelText: hemizygous ? 'Allele' : 'Allele 1',
-                isDense: true,
-              ),
-              items: [
-                const DropdownMenuItem(value: null, child: Text('Unknown')),
-                ...locus.alleles.map((a) => DropdownMenuItem(
-                    value: a.id, child: Text(a.symbol))),
-              ],
-              onChanged: (v) => setState(() {
-                _genotypeSelections[locus.id] = (v, current.$2);
-              }),
-            ),
-          ),
-          if (!hemizygous) ...[
-            const SizedBox(width: 8),
-            Expanded(
-              flex: 3,
-              child: DropdownButtonFormField<String?>(
-                initialValue: current.$2,
-                isExpanded: true,
-                decoration: const InputDecoration(
-                  labelText: 'Allele 2',
-                  isDense: true,
-                ),
-                items: [
-                  const DropdownMenuItem(value: null, child: Text('Unknown')),
-                  ...locus.alleles.map((a) => DropdownMenuItem(
-                      value: a.id, child: Text(a.symbol))),
-                ],
-                onChanged: (v) => setState(() {
-                  _genotypeSelections[locus.id] = (current.$1, v);
-                }),
-              ),
-            ),
-          ],
-        ],
-      ),
+    return LocusGenotypeField(
+      locus: locus,
+      hemizygous: hemizygous,
+      allele1Id: current.$1,
+      allele2Id: current.$2,
+      onChanged: (a1, a2) => setState(() {
+        _genotypeSelections[locus.id] = (a1, a2);
+      }),
     );
   }
 

@@ -65,6 +65,29 @@ class GeneticsRepository {
     return result;
   }
 
+  Future<List<PhenotypeTraitInfo>> phenotypeTraitsForSpecies(
+      String speciesId) async {
+    final traitRows = await (db.select(db.phenotypeTraits)
+          ..where((t) => t.speciesId.equals(speciesId)))
+        .get();
+    final result = <PhenotypeTraitInfo>[];
+    for (final trait in traitRows) {
+      final optionRows = await (db.select(db.phenotypeTraitOptions)
+            ..where((t) => t.phenotypeTraitId.equals(trait.id)))
+          .get();
+      result.add(PhenotypeTraitInfo(
+        id: trait.id,
+        key: trait.key,
+        name: trait.name,
+        relatedLocusId: trait.relatedLocusId,
+        options: optionRows
+            .map((o) => PhenotypeTraitOptionInfo(id: o.id, label: o.label))
+            .toList(),
+      ));
+    }
+    return result;
+  }
+
   /// Resolves as many of [loci] as possible for one animal. Loci with no
   /// known or inferable genotype are simply absent from the result map.
   Future<Map<String, Genotype>> resolveGenotypesForAnimal({

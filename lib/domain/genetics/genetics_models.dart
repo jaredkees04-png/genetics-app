@@ -82,3 +82,28 @@ class Genotype {
   @override
   String toString() => label;
 }
+
+class PhenotypeTraitOptionInfo {
+  final String id;
+  final String label;
+  const PhenotypeTraitOptionInfo({required this.id, required this.label});
+}
+
+/// A visually-observable trait (e.g. "Plumage Pattern") plus its
+/// pick-list of options, for UI display and for recording an observation
+/// without a genotype test.
+class PhenotypeTraitInfo {
+  final String id;
+  final String key;
+  final String name;
+  final String? relatedLocusId;
+  final List<PhenotypeTraitOptionInfo> options;
+
+  const PhenotypeTraitInfo({
+    required this.id,
+    required this.key,
+    required this.name,
+    this.relatedLocusId,
+    required this.options,
+  });
+}
