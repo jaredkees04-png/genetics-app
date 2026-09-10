@@ -74,9 +74,23 @@ class LocusGenotypeField extends StatelessWidget {
   }
 }
 
-/// Chicken is ZW: hens are the heterogametic sex, so a hen is hemizygous
-/// (single allele) at a Z-linked locus. Generalizes if a mammal species
-/// with sex-linked loci is added later (XY: males hemizygous instead).
-bool isHemizygousForAnimal(LocusInfo locus, String animalSex) {
-  return locus.isSexLinked && animalSex == 'female';
+/// Whether this animal is hemizygous (single allele) at [locus]. Depends
+/// on the species' sex-determination system, not just sex: birds are ZW
+/// (hens are the heterogametic sex), mammals are XY (males are). Getting
+/// this backwards for an XY species would silently ask a bull for two
+/// alleles at a sex-linked locus he can only carry one of.
+bool isHemizygousForAnimal(
+  LocusInfo locus,
+  String animalSex,
+  SexDeterminationSystem sexSystem,
+) {
+  if (!locus.isSexLinked) return false;
+  switch (sexSystem) {
+    case SexDeterminationSystem.zw:
+      return animalSex == 'female';
+    case SexDeterminationSystem.xy:
+      return animalSex == 'male';
+    case SexDeterminationSystem.none:
+      return false;
+  }
 }

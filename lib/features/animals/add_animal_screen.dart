@@ -7,7 +7,8 @@ import '../../domain/genetics/genetics_models.dart';
 import 'widgets/locus_genotype_field.dart';
 
 class AddAnimalScreen extends ConsumerStatefulWidget {
-  const AddAnimalScreen({super.key});
+  final String speciesId;
+  const AddAnimalScreen({super.key, required this.speciesId});
 
   @override
   ConsumerState<AddAnimalScreen> createState() => _AddAnimalScreenState();
@@ -35,9 +36,9 @@ class _AddAnimalScreenState extends ConsumerState<AddAnimalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final speciesAsync = ref.watch(chickenSpeciesProvider);
-    final lociAsync = ref.watch(lociForChickenProvider);
-    final animalsAsync = ref.watch(animalsProvider(null));
+    final speciesAsync = ref.watch(speciesByIdProvider(widget.speciesId));
+    final lociAsync = ref.watch(lociForSpeciesProvider(widget.speciesId));
+    final animalsAsync = ref.watch(animalsProvider(widget.speciesId));
 
     return Scaffold(
       appBar: AppBar(title: const Text('Add Animal')),
@@ -45,11 +46,19 @@ class _AddAnimalScreenState extends ConsumerState<AddAnimalScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, st) => Center(child: Text('Error: $e')),
         data: (species) {
+          if (species == null) {
+            return const Center(child: Text('Species not found.'));
+          }
+          final sexSystem = parseSexDeterminationSystem(
+              species.sexDeterminationSystem);
           return Form(
             key: _formKey,
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                Text('Species: ${species.name}',
+                    style: Theme.of(context).textTheme.labelLarge),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: _nameController,
                   decoration: const InputDecoration(labelText: 'Name / Tag'),
@@ -123,7 +132,8 @@ class _AddAnimalScreenState extends ConsumerState<AddAnimalScreen> {
                   error: (_, __) => const SizedBox.shrink(),
                   data: (loci) => Column(
                     children: [
-                      for (final locus in loci) _buildLocusRow(locus),
+                      for (final locus in loci)
+                        _buildLocusRow(locus, sexSystem),
                     ],
                   ),
                 ),
@@ -152,8 +162,8 @@ class _AddAnimalScreenState extends ConsumerState<AddAnimalScreen> {
     );
   }
 
-  Widget _buildLocusRow(LocusInfo locus) {
-    final hemizygous = isHemizygousForAnimal(locus, _sex);
+  Widget _buildLocusRow(LocusInfo locus, SexDeterminationSystem sexSystem) {
+    final hemizygous = isHemizygousForAnimal(locus, _sex, sexSystem);
     final current = _genotypeSelections[locus.id] ?? (null, null);
 
     return LocusGenotypeField(

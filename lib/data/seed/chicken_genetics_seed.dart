@@ -1,9 +1,5 @@
-import 'dart:convert';
-
-import 'package:drift/drift.dart';
-
 import '../database/app_database.dart';
-import '../database/id_generator.dart';
+import 'seed_helpers.dart';
 
 /// Seeds the chicken species plus a first-pass plumage genetics dataset.
 ///
@@ -23,43 +19,30 @@ class ChickenGeneticsSeed {
   const ChickenGeneticsSeed(this.db);
 
   Future<void> run() async {
-    final existing = await (db.select(db.species)
-          ..where((t) => t.name.equals('Chicken')))
-        .getSingleOrNull();
-    if (existing != null) return;
+    final h = SeedHelpers(db);
+    if (await h.speciesExists('Chicken')) return;
 
     await db.transaction(() async {
-      final speciesId = newId();
-      await db.into(db.species).insert(
-            SpeciesCompanion.insert(
-              id: Value(speciesId),
-              name: 'Chicken',
-              sexDeterminationSystem: 'ZW',
-            ),
-            mode: InsertMode.insertOrIgnore,
-          );
+      final speciesId =
+          await h.insertSpecies(name: 'Chicken', sexDeterminationSystem: 'ZW');
 
-      await db.into(db.speciesReproductionProfiles).insert(
-            SpeciesReproductionProfilesCompanion.insert(
-              speciesId: speciesId,
-              gestationOrIncubationDays: 21,
-              offspringUnit: 'clutch',
-              typicalOffspringMin: const Value(8),
-              typicalOffspringMax: const Value(12),
-            ),
-          );
+      await h.insertReproductionProfile(
+        speciesId: speciesId,
+        gestationOrIncubationDays: 21,
+        offspringUnit: 'clutch',
+        typicalOffspringMin: 8,
+        typicalOffspringMax: 12,
+      );
 
-      await db.into(db.traitDefinitions).insert(
-            TraitDefinitionsCompanion.insert(
-              speciesId: speciesId,
-              key: 'egg_rate',
-              name: 'Egg-laying rate',
-              unit: 'eggs/week',
-              measurementPeriod: 'per_week',
-            ),
-          );
+      await h.insertTraitDefinition(
+        speciesId: speciesId,
+        key: 'egg_rate',
+        name: 'Egg-laying rate',
+        unit: 'eggs/week',
+        measurementPeriod: 'per_week',
+      );
 
-      final eLocusId = await _insertLocus(
+      final eLocusId = await h.insertLocus(
         speciesId: speciesId,
         key: 'E',
         name: 'Extended Black',
@@ -69,13 +52,13 @@ class ChickenGeneticsSeed {
             'Simplified 3-allele dominance series controlling base '
             'eumelanin (black) expression.',
       );
-      final eAlleles = await _insertAlleles(eLocusId, [
+      final eAlleles = await h.insertAlleles(eLocusId, [
         ('E', 'Extended Black', 1),
         ('e+', 'Wild-type (Duckwing)', 2),
         ('eb', 'Brown (Partridge)', 3),
       ]);
 
-      final bLocusId = await _insertLocus(
+      final bLocusId = await h.insertLocus(
         speciesId: speciesId,
         key: 'B',
         name: 'Barring',
@@ -86,12 +69,12 @@ class ChickenGeneticsSeed {
             '(ZW), a barred rooster x non-barred hen cross famously '
             'lets you sex chicks at hatch by down color.',
       );
-      final bAlleles = await _insertAlleles(bLocusId, [
+      final bAlleles = await h.insertAlleles(bLocusId, [
         ('B', 'Barred', 1),
         ('b+', 'Non-barred', 2),
       ]);
 
-      final blLocusId = await _insertLocus(
+      final blLocusId = await h.insertLocus(
         speciesId: speciesId,
         key: 'Bl',
         name: 'Blue/Lavender Dilution',
@@ -102,12 +85,12 @@ class ChickenGeneticsSeed {
             'phenotype, not a blend that resembles either homozygote. '
             'Bl/Bl homozygotes are Splash.',
       );
-      final blAlleles = await _insertAlleles(blLocusId, [
+      final blAlleles = await h.insertAlleles(blLocusId, [
         ('Bl', 'Blue dilution', null),
         ('bl+', 'Not diluted', null),
       ]);
 
-      await _insertPhenotypeTrait(
+      await h.insertPhenotypeTrait(
         speciesId: speciesId,
         key: 'base_color',
         name: 'Base Color',
@@ -131,7 +114,7 @@ class ChickenGeneticsSeed {
         ],
       );
 
-      await _insertPhenotypeTrait(
+      await h.insertPhenotypeTrait(
         speciesId: speciesId,
         key: 'plumage_pattern',
         name: 'Plumage Pattern',
@@ -149,7 +132,7 @@ class ChickenGeneticsSeed {
         ],
       );
 
-      await _insertPhenotypeTrait(
+      await h.insertPhenotypeTrait(
         speciesId: speciesId,
         key: 'dilution',
         name: 'Dilution',
@@ -167,79 +150,5 @@ class ChickenGeneticsSeed {
         ],
       );
     });
-  }
-
-  Future<String> _insertLocus({
-    required String speciesId,
-    required String key,
-    required String name,
-    required String inheritancePattern,
-    required bool isSexLinked,
-    String? description,
-  }) async {
-    final id = newId();
-    await db.into(db.loci).insert(
-          LociCompanion.insert(
-            id: Value(id),
-            speciesId: speciesId,
-            key: key,
-            name: name,
-            inheritancePattern: inheritancePattern,
-            isSexLinked: Value(isSexLinked),
-            description: Value(description),
-          ),
-        );
-    return id;
-  }
-
-  /// Inserts alleles for a locus, returning a symbol -> id lookup map.
-  Future<Map<String, String>> _insertAlleles(
-    String locusId,
-    List<(String symbol, String name, int? dominanceRank)> alleles,
-  ) async {
-    final result = <String, String>{};
-    for (final (symbol, name, rank) in alleles) {
-      final id = newId();
-      await db.into(db.alleles).insert(
-            AllelesCompanion.insert(
-              id: Value(id),
-              locusId: locusId,
-              symbol: symbol,
-              name: name,
-              dominanceRank: Value(rank),
-            ),
-          );
-      result[symbol] = id;
-    }
-    return result;
-  }
-
-  Future<void> _insertPhenotypeTrait({
-    required String speciesId,
-    required String key,
-    required String name,
-    required String relatedLocusId,
-    required List<(String label, List<List<String>> plausibleAlleleIds)> options,
-  }) async {
-    final traitId = newId();
-    await db.into(db.phenotypeTraits).insert(
-          PhenotypeTraitsCompanion.insert(
-            id: Value(traitId),
-            speciesId: speciesId,
-            key: key,
-            name: name,
-            relatedLocusId: Value(relatedLocusId),
-          ),
-        );
-    for (final (label, plausible) in options) {
-      await db.into(db.phenotypeTraitOptions).insert(
-            PhenotypeTraitOptionsCompanion.insert(
-              id: Value(newId()),
-              phenotypeTraitId: traitId,
-              label: label,
-              plausibleGenotypesJson: Value(jsonEncode(plausible)),
-            ),
-          );
-    }
   }
 }

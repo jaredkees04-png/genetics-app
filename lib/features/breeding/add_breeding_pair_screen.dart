@@ -5,7 +5,8 @@ import '../../app/providers.dart';
 import 'breeding_prediction_screen.dart';
 
 class AddBreedingPairScreen extends ConsumerStatefulWidget {
-  const AddBreedingPairScreen({super.key});
+  final String speciesId;
+  const AddBreedingPairScreen({super.key, required this.speciesId});
 
   @override
   ConsumerState<AddBreedingPairScreen> createState() =>
@@ -27,8 +28,7 @@ class _AddBreedingPairScreenState
 
   @override
   Widget build(BuildContext context) {
-    final animalsAsync = ref.watch(animalsProvider(null));
-    final speciesAsync = ref.watch(chickenSpeciesProvider);
+    final animalsAsync = ref.watch(animalsProvider(widget.speciesId));
 
     return Scaffold(
       appBar: AppBar(title: const Text('Add Breeding Pair')),
@@ -82,7 +82,7 @@ class _AddBreedingPairScreenState
               FilledButton(
                 onPressed: _saving || _sireId == null || _damId == null
                     ? null
-                    : () => _save(speciesAsync.value?.id),
+                    : () => _save(widget.speciesId),
                 child: _saving
                     ? const SizedBox(
                         height: 16,
@@ -98,8 +98,8 @@ class _AddBreedingPairScreenState
     );
   }
 
-  Future<void> _save(String? speciesId) async {
-    if (speciesId == null || _sireId == null || _damId == null) return;
+  Future<void> _save(String speciesId) async {
+    if (_sireId == null || _damId == null) return;
     setState(() => _saving = true);
     try {
       final repo = ref.read(breedingRepositoryProvider);
@@ -113,7 +113,7 @@ class _AddBreedingPairScreenState
       );
 
       if (!mounted) return;
-      final animals = ref.read(animalsProvider(null)).value ?? [];
+      final animals = ref.read(animalsProvider(speciesId)).value ?? [];
       String nameFor(String? id, String fallback) {
         for (final a in animals) {
           if (a.id == id) return a.name;

@@ -131,7 +131,7 @@ class BreedingRepository {
           ..where((t) => t.id.equals(pairing.damId)))
         .getSingle();
 
-    final sexSystem = genetics.parseSexSystem(species.sexDeterminationSystem);
+    final sexSystem = parseSexDeterminationSystem(species.sexDeterminationSystem);
     final loci = await genetics.lociForSpecies(species.id);
 
     final sireGenotypes = await genetics.resolveGenotypesForAnimal(
