@@ -4,6 +4,8 @@ import '../data/database/app_database.dart';
 import '../data/repositories/animal_repository.dart';
 import '../data/repositories/breeding_repository.dart';
 import '../data/repositories/genetics_repository.dart';
+import '../data/repositories/trait_repository.dart';
+import '../domain/genetics/genetics_models.dart';
 
 /// Overridden with a real, already-seeded instance in main().
 final databaseProvider = Provider<AppDatabase>((ref) {
@@ -25,6 +27,10 @@ final breedingRepositoryProvider = Provider<BreedingRepository>(
   ),
 );
 
+final traitRepositoryProvider = Provider<TraitRepository>(
+  (ref) => TraitRepository(ref.watch(databaseProvider)),
+);
+
 final speciesListProvider = StreamProvider<List<SpeciesRow>>(
   (ref) => ref.watch(animalRepositoryProvider).watchSpecies(),
 );
@@ -41,9 +47,42 @@ final lociForChickenProvider = FutureProvider((ref) async {
   return ref.watch(geneticsRepositoryProvider).lociForSpecies(species.id);
 });
 
+final phenotypeTraitsForChickenProvider =
+    FutureProvider<List<PhenotypeTraitInfo>>((ref) async {
+  final species = await ref.watch(chickenSpeciesProvider.future);
+  return ref
+      .watch(geneticsRepositoryProvider)
+      .phenotypeTraitsForSpecies(species.id);
+});
+
+final traitDefinitionsForChickenProvider =
+    StreamProvider<List<TraitDefinition>>((ref) async* {
+  final species = await ref.watch(chickenSpeciesProvider.future);
+  yield* ref.watch(traitRepositoryProvider).watchTraitDefinitions(species.id);
+});
+
+final animalGenotypesProvider = StreamProvider.family<List<AnimalGenotype>, String>(
+  (ref, animalId) => ref.watch(animalRepositoryProvider).watchGenotypes(animalId),
+);
+
+final animalPhenotypeObservationsProvider =
+    StreamProvider.family<List<AnimalPhenotypeObservation>, String>(
+  (ref, animalId) =>
+      ref.watch(animalRepositoryProvider).watchPhenotypeObservations(animalId),
+);
+
+final animalTraitRecordsProvider =
+    StreamProvider.family<List<TraitRecord>, String>(
+  (ref, animalId) => ref.watch(traitRepositoryProvider).watchTraitRecords(animalId),
+);
+
 final animalsProvider = StreamProvider.family<List<Animal>, String?>(
   (ref, speciesId) =>
       ref.watch(animalRepositoryProvider).watchAnimals(speciesId: speciesId),
+);
+
+final animalByIdProvider = FutureProvider.family<Animal?, String>(
+  (ref, animalId) => ref.watch(animalRepositoryProvider).getAnimal(animalId),
 );
 
 final pairingsProvider = StreamProvider.family<List<BreedingPairing>, String?>(
