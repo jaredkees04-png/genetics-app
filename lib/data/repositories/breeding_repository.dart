@@ -221,13 +221,13 @@ class BreedingRepository {
       String basis;
       if (sireAvg != null && damAvg != null) {
         predicted = (sireAvg + damAvg) / 2;
-        basis = 'Mid-parent average of sire and dam records';
+        basis = 'Mid-parent average of father and mother records';
       } else if (sireAvg != null) {
         predicted = sireAvg;
-        basis = 'Sire records only (no dam records yet)';
+        basis = 'Father records only (no mother records yet)';
       } else if (damAvg != null) {
         predicted = damAvg;
-        basis = 'Dam records only (no sire records yet)';
+        basis = 'Mother records only (no father records yet)';
       } else {
         predicted = null;
         basis = 'No records for either parent yet';

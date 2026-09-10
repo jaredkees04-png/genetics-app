@@ -91,7 +91,7 @@ class _AddAnimalScreenState extends ConsumerState<AddAnimalScreen> {
                         DropdownButtonFormField<String?>(
                           initialValue: _sireId,
                           decoration:
-                              const InputDecoration(labelText: 'Sire (optional)'),
+                              const InputDecoration(labelText: 'Father (optional)'),
                           items: [
                             const DropdownMenuItem(
                                 value: null, child: Text('Unknown')),
@@ -104,7 +104,7 @@ class _AddAnimalScreenState extends ConsumerState<AddAnimalScreen> {
                         DropdownButtonFormField<String?>(
                           initialValue: _damId,
                           decoration:
-                              const InputDecoration(labelText: 'Dam (optional)'),
+                              const InputDecoration(labelText: 'Mother (optional)'),
                           items: [
                             const DropdownMenuItem(
                                 value: null, child: Text('Unknown')),

@@ -85,8 +85,8 @@ class _BreedingPairListBody extends ConsumerWidget {
                 MaterialPageRoute(
                   builder: (_) => BreedingPredictionScreen(
                     pairingId: pairing.id,
-                    sireName: sire?.name ?? 'Sire',
-                    damName: dam?.name ?? 'Dam',
+                    sireName: sire?.name ?? 'Father',
+                    damName: dam?.name ?? 'Mother',
                   ),
                 ),
               ),

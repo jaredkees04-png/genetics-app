@@ -65,8 +65,8 @@ class _InfoSection extends ConsumerWidget {
             Text(animal.name, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             Text('Sex: ${animal.sex}'),
-            Text('Sire: ${nameFor(animal.sireId)}'),
-            Text('Dam: ${nameFor(animal.damId)}'),
+            Text('Father: ${nameFor(animal.sireId)}'),
+            Text('Mother: ${nameFor(animal.damId)}'),
             if (animal.notes != null && animal.notes!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
