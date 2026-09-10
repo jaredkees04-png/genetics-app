@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/providers.dart';
 import '../home/species_selector.dart';
+import '../settings/settings_button.dart';
 import 'add_breeding_pair_screen.dart';
 import 'breeding_prediction_screen.dart';
 
@@ -16,7 +17,12 @@ class BreedingPairListScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Breeding Pairs'),
-        actions: const [SpeciesSelector(), SizedBox(width: 8)],
+        actions: const [
+          SpeciesSelector(),
+          SizedBox(width: 4),
+          SettingsButton(),
+          SizedBox(width: 4),
+        ],
       ),
       body: currentSpecies == null
           ? const Center(

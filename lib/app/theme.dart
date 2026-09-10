@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 
-/// A muted, farm-appropriate green - kept close to the original seed
-/// color, refined into a proper light/dark Material 3 pair rather than
-/// a single hardcoded light theme.
-const _seedColor = Color(0xFF3E6B4F);
+/// Builds a proper light/dark Material 3 theme pair from any seed color -
+/// see AppColorScheme in app_settings.dart for the picker that chooses
+/// which one.
+ThemeData buildLightTheme(Color seedColor) =>
+    _buildTheme(ColorScheme.fromSeed(seedColor: seedColor));
 
-ThemeData buildLightTheme() =>
-    _buildTheme(ColorScheme.fromSeed(seedColor: _seedColor));
-
-ThemeData buildDarkTheme() => _buildTheme(
+ThemeData buildDarkTheme(Color seedColor) => _buildTheme(
       ColorScheme.fromSeed(
-        seedColor: _seedColor,
+        seedColor: seedColor,
         brightness: Brightness.dark,
       ),
     );
