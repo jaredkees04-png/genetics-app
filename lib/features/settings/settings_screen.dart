@@ -91,19 +91,22 @@ class _ColorSwatch extends StatelessWidget {
               decoration: BoxDecoration(
                 color: scheme.seedColor,
                 shape: BoxShape.circle,
-                border: selected
-                    ? Border.all(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        width: 3,
-                      )
-                    : null,
+                border: Border.all(
+                  color: selected
+                      ? Theme.of(context).colorScheme.onSurface
+                      : Theme.of(context).colorScheme.outlineVariant,
+                  width: selected ? 3 : 1.5,
+                ),
               ),
               child: selected
                   ? const Icon(Icons.check, color: Colors.white)
                   : null,
             ),
             const SizedBox(height: 6),
-            Text(scheme.label, style: const TextStyle(fontSize: 12)),
+            Text(
+              scheme.label,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+            ),
           ],
         ),
       ),

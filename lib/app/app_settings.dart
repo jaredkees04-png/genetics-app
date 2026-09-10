@@ -7,11 +7,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// adding a new option here is the only step needed - no other theme
 /// code changes.
 enum AppColorScheme {
-  green('Green', Color(0xFF3E6B4F)),
-  blue('Blue', Color(0xFF2E5C8A)),
-  rust('Rust', Color(0xFF8A4A2E)),
-  plum('Plum', Color(0xFF6B3E5C)),
-  slate('Slate', Color(0xFF46505C));
+  green('Green', Color(0xFF43A047)),
+  blue('Blue', Color(0xFF1E88E5)),
+  teal('Teal', Color(0xFF00897B)),
+  amber('Amber', Color(0xFFF9A825)),
+  rust('Rust', Color(0xFFD84315)),
+  red('Red', Color(0xFFE53935)),
+  plum('Plum', Color(0xFF8E24AA)),
+  slate('Slate', Color(0xFF546E7A));
 
   final String label;
   final Color seedColor;
