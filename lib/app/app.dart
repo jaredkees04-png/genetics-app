@@ -11,7 +11,9 @@ class GeneticsApp extends StatelessWidget {
     return MaterialApp(
       title: 'Livestock Genetics',
       debugShowCheckedModeBanner: false,
-      theme: buildAppTheme(),
+      theme: buildLightTheme(),
+      darkTheme: buildDarkTheme(),
+      themeMode: ThemeMode.system,
       home: const HomeScreen(),
     );
   }
