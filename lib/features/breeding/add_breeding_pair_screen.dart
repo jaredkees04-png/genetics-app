@@ -55,7 +55,7 @@ class _AddBreedingPairScreenState
             children: [
               DropdownButtonFormField<String>(
                 initialValue: _sireId,
-                decoration: const InputDecoration(labelText: 'Sire'),
+                decoration: const InputDecoration(labelText: 'Father'),
                 items: sires
                     .map((a) =>
                         DropdownMenuItem(value: a.id, child: Text(a.name)))
@@ -65,7 +65,7 @@ class _AddBreedingPairScreenState
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: _damId,
-                decoration: const InputDecoration(labelText: 'Dam'),
+                decoration: const InputDecoration(labelText: 'Mother'),
                 items: dams
                     .map((a) =>
                         DropdownMenuItem(value: a.id, child: Text(a.name)))
@@ -121,8 +121,8 @@ class _AddBreedingPairScreenState
         return fallback;
       }
 
-      final sireName = nameFor(_sireId, 'Sire');
-      final damName = nameFor(_damId, 'Dam');
+      final sireName = nameFor(_sireId, 'Father');
+      final damName = nameFor(_damId, 'Mother');
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
