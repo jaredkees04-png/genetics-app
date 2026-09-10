@@ -118,12 +118,13 @@ class _AddAnimalScreenState extends ConsumerState<AddAnimalScreen> {
                   },
                 ),
                 const SizedBox(height: 24),
-                Text('Known genotype (optional)',
+                Text('Coloring & Pattern Genes (optional)',
                     style: Theme.of(context).textTheme.titleMedium),
                 const Text(
-                  'Leave a locus unset if you don\'t know it - '
-                  'predictions will simply skip loci with unknown '
-                  'genotype for either parent.',
+                  'Each trait below is passed down as two "versions" - one '
+                  'from each parent. If you know which versions this animal '
+                  'carries, pick them below. If you\'re not sure, leave it '
+                  '"Unknown" and predictions will just skip that trait.',
                   style: TextStyle(fontSize: 12, color: Colors.grey),
                 ),
                 const SizedBox(height: 8),

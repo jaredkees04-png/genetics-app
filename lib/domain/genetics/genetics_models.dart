@@ -62,6 +62,10 @@ class LocusInfo {
   final bool isSexLinked;
   final List<AlleleInfo> alleles;
 
+  /// Plain-language explanation of what this trait controls, shown in the
+  /// UI so "Extended Black" or "Barring" isn't just an unexplained label.
+  final String? description;
+
   const LocusInfo({
     required this.id,
     required this.key,
@@ -69,6 +73,7 @@ class LocusInfo {
     required this.inheritancePattern,
     required this.isSexLinked,
     required this.alleles,
+    this.description,
   });
 }
 

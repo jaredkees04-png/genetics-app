@@ -54,7 +54,10 @@ class CattleGeneticsSeed {
         name: 'Extension',
         inheritancePattern: 'dominant_series',
         isSexLinked: false,
-        description: 'Black is dominant over red (e.g. Angus vs. Red Angus).',
+        description:
+            'Controls coat color - black or red - and black is '
+            'dominant. This is the same gene behind the difference '
+            'between Angus and Red Angus cattle.',
       );
       final eAlleles = await h.insertAlleles(eLocusId, [
         ('E', 'Black', 1),

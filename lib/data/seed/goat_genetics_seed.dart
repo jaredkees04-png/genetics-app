@@ -43,8 +43,8 @@ class GoatGeneticsSeed {
         inheritancePattern: 'dominant_series',
         isSexLinked: false,
         description:
-            'Simplified 3-allele dominance series controlling coat '
-            'pattern.',
+            'Controls the coat pattern - solid black, a broken/'
+            'Swiss-marked pattern, or a plain tan coat with no pattern.',
       );
       final aAlleles = await h.insertAlleles(aLocusId, [
         ('Sb', 'Solid Black', 1),
@@ -58,7 +58,9 @@ class GoatGeneticsSeed {
         name: 'Brown Dilution',
         inheritancePattern: 'dominant_series',
         isSexLinked: false,
-        description: 'Black pigment is dominant over brown (chocolate).',
+        description:
+            'Controls whether the coat pigment is black or brown '
+            '(chocolate) - black is dominant.',
       );
       final bAlleles = await h.insertAlleles(bLocusId, [
         ('B', 'Black pigment', 1),

@@ -41,6 +41,7 @@ class GeneticsRepository {
         name: locus.name,
         inheritancePattern: _parseInheritancePattern(locus.inheritancePattern),
         isSexLinked: locus.isSexLinked,
+        description: locus.description,
         alleles: alleleRows
             .map((a) => AlleleInfo(
                   id: a.id,

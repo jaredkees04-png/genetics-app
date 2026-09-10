@@ -92,7 +92,13 @@ class _GenotypeSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Genotype', style: Theme.of(context).textTheme.titleMedium),
+        Text('Coloring & Pattern Genes',
+            style: Theme.of(context).textTheme.titleMedium),
+        const Text(
+          'Each trait is passed down as two "versions" - one from each '
+          'parent. Update what you know below.',
+          style: TextStyle(fontSize: 12, color: Colors.grey),
+        ),
         const SizedBox(height: 8),
         lociAsync.when(
           loading: () => const SizedBox.shrink(),

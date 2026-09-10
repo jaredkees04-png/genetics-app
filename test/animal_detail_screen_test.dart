@@ -50,7 +50,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.text('Genotype'), findsOneWidget);
+    expect(find.text('Coloring & Pattern Genes'), findsOneWidget);
     expect(find.text('Observed Phenotype'), findsOneWidget);
     expect(find.text('Production Records'), findsOneWidget);
     expect(find.textContaining('Egg-laying rate'), findsOneWidget);

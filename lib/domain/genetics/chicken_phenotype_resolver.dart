@@ -47,14 +47,15 @@ class ChickenPhenotypeResolver implements PhenotypeResolver {
     return hasBarring ? 'Barred' : 'Non-barred';
   }
 
-  /// Incomplete dominance: heterozygote is a visually distinct third
-  /// phenotype (Blue), not a blend that looks like either homozygote.
+  /// Incomplete dominance: three distinct phenotypes, none of which is a
+  /// simple blend - Bl/Bl is Splash (not "more diluted" than Blue),
+  /// bl+/bl+ is not diluted at all, and only the heterozygote is Blue.
   String _resolveBlueDilution(Genotype genotype) {
     if (genotype.isHemizygous) {
-      return genotype.allele1.name;
+      return genotype.allele1.symbol == 'Bl' ? 'Splash' : genotype.allele1.name;
     }
     if (genotype.allele1.id == genotype.allele2!.id) {
-      return genotype.allele1.name; // homozygous either way
+      return genotype.allele1.symbol == 'Bl' ? 'Splash' : genotype.allele1.name;
     }
     return 'Blue'; // heterozygous Bl/bl+
   }

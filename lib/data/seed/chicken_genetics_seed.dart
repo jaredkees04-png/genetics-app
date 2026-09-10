@@ -49,8 +49,9 @@ class ChickenGeneticsSeed {
         inheritancePattern: 'dominant_series',
         isSexLinked: false,
         description:
-            'Simplified 3-allele dominance series controlling base '
-            'eumelanin (black) expression.',
+            'Controls the bird\'s base feather color - solid black, or '
+            'the wild (duckwing) coloring, or brown, depending on which '
+            'version it carries.',
       );
       final eAlleles = await h.insertAlleles(eLocusId, [
         ('E', 'Extended Black', 1),
@@ -65,9 +66,11 @@ class ChickenGeneticsSeed {
         inheritancePattern: 'dominant_series',
         isSexLinked: true,
         description:
-            'Z-linked. Barred is dominant. Because hens are hemizygous '
-            '(ZW), a barred rooster x non-barred hen cross famously '
-            'lets you sex chicks at hatch by down color.',
+            'Controls the barred (striped) feather pattern - the barred '
+            'version is dominant. This trait passes down differently to '
+            'sons versus daughters, which is why crossing a barred '
+            'rooster with a non-barred hen is a classic trick for '
+            'telling male and female chicks apart right at hatch.',
       );
       final bAlleles = await h.insertAlleles(bLocusId, [
         ('B', 'Barred', 1),
@@ -81,9 +84,10 @@ class ChickenGeneticsSeed {
         inheritancePattern: 'incomplete_dominance',
         isSexLinked: false,
         description:
-            'Heterozygotes (Bl/bl+) are Blue - a distinct third '
-            'phenotype, not a blend that resembles either homozygote. '
-            'Bl/Bl homozygotes are Splash.',
+            'Lightens (dilutes) black feathers. One copy gives a '
+            'blue-gray color; two copies give "Splash" - a pale, '
+            'blotchy pattern that\'s its own distinct look, not just a '
+            'lighter blue.',
       );
       final blAlleles = await h.insertAlleles(blLocusId, [
         ('Bl', 'Blue dilution', null),
