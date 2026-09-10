@@ -15,17 +15,6 @@ class GeneticsRepository {
   final AppDatabase db;
   const GeneticsRepository(this.db);
 
-  SexDeterminationSystem parseSexSystem(String value) {
-    switch (value) {
-      case 'ZW':
-        return SexDeterminationSystem.zw;
-      case 'XY':
-        return SexDeterminationSystem.xy;
-      default:
-        return SexDeterminationSystem.none;
-    }
-  }
-
   InheritancePattern _parseInheritancePattern(String value) {
     switch (value) {
       case 'incomplete_dominance':

@@ -35,31 +35,60 @@ final speciesListProvider = StreamProvider<List<SpeciesRow>>(
   (ref) => ref.watch(animalRepositoryProvider).watchSpecies(),
 );
 
-/// v1 only ever seeds one species; this is the convenience accessor the
-/// UI uses everywhere it needs "the current species".
-final chickenSpeciesProvider = FutureProvider<SpeciesRow>((ref) async {
-  final list = await ref.watch(speciesListProvider.future);
-  return list.firstWhere((s) => s.name == 'Chicken');
+final speciesByIdProvider = FutureProvider.family<SpeciesRow?, String>(
+  (ref, speciesId) async {
+    final list = await ref.watch(speciesListProvider.future);
+    for (final s in list) {
+      if (s.id == speciesId) return s;
+    }
+    return null;
+  },
+);
+
+class _SelectedSpeciesId extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void select(String? speciesId) => state = speciesId;
+}
+
+/// User's explicit species choice, via the selector in the app bar. Null
+/// means "no explicit choice yet" - [currentSpeciesProvider] then falls
+/// back to the first seeded species.
+final selectedSpeciesIdProvider =
+    NotifierProvider<_SelectedSpeciesId, String?>(_SelectedSpeciesId.new);
+
+/// The species screens should show data for right now: the explicit
+/// selection if one was made and still exists, otherwise the first
+/// seeded species, otherwise null (nothing seeded yet).
+final currentSpeciesProvider = Provider<AsyncValue<SpeciesRow?>>((ref) {
+  final selectedId = ref.watch(selectedSpeciesIdProvider);
+  final speciesListAsync = ref.watch(speciesListProvider);
+  return speciesListAsync.whenData((list) {
+    if (list.isEmpty) return null;
+    for (final s in list) {
+      if (s.id == selectedId) return s;
+    }
+    return list.first;
+  });
 });
 
-final lociForChickenProvider = FutureProvider((ref) async {
-  final species = await ref.watch(chickenSpeciesProvider.future);
-  return ref.watch(geneticsRepositoryProvider).lociForSpecies(species.id);
-});
+final lociForSpeciesProvider = FutureProvider.family<List<LocusInfo>, String>(
+  (ref, speciesId) =>
+      ref.watch(geneticsRepositoryProvider).lociForSpecies(speciesId),
+);
 
-final phenotypeTraitsForChickenProvider =
-    FutureProvider<List<PhenotypeTraitInfo>>((ref) async {
-  final species = await ref.watch(chickenSpeciesProvider.future);
-  return ref
-      .watch(geneticsRepositoryProvider)
-      .phenotypeTraitsForSpecies(species.id);
-});
+final phenotypeTraitsForSpeciesProvider =
+    FutureProvider.family<List<PhenotypeTraitInfo>, String>(
+  (ref, speciesId) =>
+      ref.watch(geneticsRepositoryProvider).phenotypeTraitsForSpecies(speciesId),
+);
 
-final traitDefinitionsForChickenProvider =
-    StreamProvider<List<TraitDefinition>>((ref) async* {
-  final species = await ref.watch(chickenSpeciesProvider.future);
-  yield* ref.watch(traitRepositoryProvider).watchTraitDefinitions(species.id);
-});
+final traitDefinitionsForSpeciesProvider =
+    StreamProvider.family<List<TraitDefinition>, String>(
+  (ref, speciesId) =>
+      ref.watch(traitRepositoryProvider).watchTraitDefinitions(speciesId),
+);
 
 final animalGenotypesProvider = StreamProvider.family<List<AnimalGenotype>, String>(
   (ref, animalId) => ref.watch(animalRepositoryProvider).watchGenotypes(animalId),

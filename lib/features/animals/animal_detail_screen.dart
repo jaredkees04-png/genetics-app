@@ -47,7 +47,7 @@ class _InfoSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final animalsAsync = ref.watch(animalsProvider(null));
+    final animalsAsync = ref.watch(animalsProvider(animal.speciesId));
     String nameFor(String? id) {
       if (id == null) return 'Unknown';
       for (final a in animalsAsync.value ?? const <Animal>[]) {
@@ -85,7 +85,8 @@ class _GenotypeSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final lociAsync = ref.watch(lociForChickenProvider);
+    final speciesAsync = ref.watch(speciesByIdProvider(animal.speciesId));
+    final lociAsync = ref.watch(lociForSpeciesProvider(animal.speciesId));
     final genotypesAsync = ref.watch(animalGenotypesProvider(animal.id));
 
     return Column(
@@ -97,11 +98,15 @@ class _GenotypeSection extends ConsumerWidget {
           loading: () => const SizedBox.shrink(),
           error: (_, __) => const SizedBox.shrink(),
           data: (loci) {
+            final species = speciesAsync.value;
+            if (species == null) return const SizedBox.shrink();
+            final sexSystem =
+                parseSexDeterminationSystem(species.sexDeterminationSystem);
             final genotypes = genotypesAsync.value ?? const <AnimalGenotype>[];
             return Column(
               children: [
                 for (final locus in loci)
-                  _buildRow(context, ref, locus, genotypes),
+                  _buildRow(context, ref, locus, genotypes, sexSystem),
               ],
             );
           },
@@ -111,12 +116,12 @@ class _GenotypeSection extends ConsumerWidget {
   }
 
   Widget _buildRow(BuildContext context, WidgetRef ref, LocusInfo locus,
-      List<AnimalGenotype> genotypes) {
+      List<AnimalGenotype> genotypes, SexDeterminationSystem sexSystem) {
     AnimalGenotype? existing;
     for (final g in genotypes) {
       if (g.locusId == locus.id) existing = g;
     }
-    final hemizygous = isHemizygousForAnimal(locus, animal.sex);
+    final hemizygous = isHemizygousForAnimal(locus, animal.sex, sexSystem);
 
     return LocusGenotypeField(
       locus: locus,
@@ -146,7 +151,7 @@ class _PhenotypeSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final traitsAsync = ref.watch(phenotypeTraitsForChickenProvider);
+    final traitsAsync = ref.watch(phenotypeTraitsForSpeciesProvider(animal.speciesId));
     final observationsAsync =
         ref.watch(animalPhenotypeObservationsProvider(animal.id));
 
@@ -212,7 +217,8 @@ class _TraitRecordsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final traitDefsAsync = ref.watch(traitDefinitionsForChickenProvider);
+    final traitDefsAsync =
+        ref.watch(traitDefinitionsForSpeciesProvider(animal.speciesId));
     final recordsAsync = ref.watch(animalTraitRecordsProvider(animal.id));
 
     return Column(

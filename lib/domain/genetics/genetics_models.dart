@@ -15,6 +15,17 @@ enum InheritancePattern { dominantSeries, incompleteDominance, codominant }
 /// Mammals: XY (males heterogametic).
 enum SexDeterminationSystem { zw, xy, none }
 
+SexDeterminationSystem parseSexDeterminationSystem(String value) {
+  switch (value) {
+    case 'ZW':
+      return SexDeterminationSystem.zw;
+    case 'XY':
+      return SexDeterminationSystem.xy;
+    default:
+      return SexDeterminationSystem.none;
+  }
+}
+
 enum AnimalSex { male, female, unknown }
 
 class AlleleInfo {
