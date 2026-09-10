@@ -1,0 +1,35 @@
+{
+    "name": "Livestock Genetics",
+    "short_name": "Genetics",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#F4F9F5",
+    "theme_color": "#3E6B4F",
+    "description": "Offline-first livestock genetics and breeding predictor.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
