@@ -60,12 +60,20 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
       ),
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      // Extra top padding (vs. bottom) leaves room for the label to float
+      // up inside the filled box without colliding with its top edge -
+      // a plain symmetric padding was too tight for that transition.
+      contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
     ),
     listTileTheme: ListTileThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
     dividerTheme: DividerThemeData(color: colorScheme.outlineVariant),
+    segmentedButtonTheme: SegmentedButtonThemeData(
+      style: SegmentedButton.styleFrom(
+        textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+        side: BorderSide(color: colorScheme.outline, width: 1.5),
+      ),
+    ),
   );
 }
