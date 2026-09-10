@@ -16,12 +16,23 @@ ThemeData buildDarkTheme(Color seedColor) => _buildTheme(
 ThemeData _buildTheme(ColorScheme colorScheme) {
   final radius = BorderRadius.circular(14);
 
+  // Material 3's auto-generated "surface" tone reads as noticeably dim in
+  // light mode (a muted, slightly gray-green rather than a crisp light
+  // background). Nudge it toward white for the page background/app bar
+  // specifically, without touching card/input surfaces - keeping those a
+  // bit more saturated than the backdrop is what gives them contrast.
+  // Dark mode is left as-is (Material's dark surface tone already reads
+  // fine, and going darker is the opposite of what's wanted there).
+  final background = colorScheme.brightness == Brightness.light
+      ? Color.lerp(colorScheme.surface, Colors.white, 0.65)!
+      : colorScheme.surface;
+
   return ThemeData(
     useMaterial3: true,
     colorScheme: colorScheme,
-    scaffoldBackgroundColor: colorScheme.surface,
+    scaffoldBackgroundColor: background,
     appBarTheme: AppBarTheme(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: background,
       foregroundColor: colorScheme.onSurface,
       elevation: 0,
       scrolledUnderElevation: 3,

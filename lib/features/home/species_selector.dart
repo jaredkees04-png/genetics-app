@@ -26,6 +26,7 @@ class SpeciesSelector extends ConsumerWidget {
           decoration: BoxDecoration(
             color: colorScheme.primaryContainer,
             borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: colorScheme.onSurface, width: 1.5),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
