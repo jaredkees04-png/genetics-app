@@ -75,6 +75,13 @@ ThemeData _buildTheme(ColorScheme colorScheme) {
       // up inside the filled box without colliding with its top edge -
       // a plain symmetric padding was too tight for that transition.
       contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+      // Dropdown fields whose "no selection" option is represented as a
+      // null value (e.g. Father/Mother "Unknown") read as isEmpty to
+      // InputDecorator, so their label never floats and sits on top of
+      // the selected item's text. Forcing the label to always float
+      // fixes that overlap and is a no-op for fields that already float
+      // once filled.
+      floatingLabelBehavior: FloatingLabelBehavior.always,
     ),
     listTileTheme: ListTileThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
